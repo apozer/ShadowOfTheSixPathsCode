@@ -146,18 +146,18 @@ namespace Jutsu
             
             try
             {
-                foreach (ContainerData.Content content in playerContainer.contents)
+                foreach (ContainerContent content in playerContainer.contents)
                 {
                     //add the content to the creatures container
                     creature.container.contents.Add(content);
                     //check if its a wardrobe item and equip it
-                    if (content.itemData.TryGetModule(out ItemModuleWardrobe _))
+                    /*if (content..TryGetModule(out ItemModuleWardrobe _))
                     {
                         creature.equipment.EquipWardrobe(content);
-                    }
+                    }*/
 
                     //check if its a holder item and spawn and snap it
-                    if (content.TryGetState(out ContentStateHolder state))
+                    /*if (content.TryGetState(out ContentStateHolder state))
                     {
                         content.Spawn(item => {
                             foreach (Holder holder in creature.holders)
@@ -166,7 +166,7 @@ namespace Jutsu
                                 holder.Snap(item, true, true);
                             }
                         });
-                    }
+                    }*/
                 }
             }
             catch (System.Exception e)

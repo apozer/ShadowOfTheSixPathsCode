@@ -13,7 +13,10 @@ namespace Jutsu
     {
         public static JutsuEntry local;
         public GameObject coroutine = new GameObject();
-        public CoroutineManager coroutineManager;
+        //public CoroutineManager coroutineManager;
+        public SDFBakeTool bakeTool = new GameObject().AddComponent<SDFBakeTool>();
+        
+        //Speech Recognition Engine object
         private SpeechRecognitionEngine recognizer;
         internal ItemData logData;
         public GameObject shadow;
@@ -21,6 +24,10 @@ namespace Jutsu
         public GameObject chidori;
         public GameObject chidoriStartSFX;
         public GameObject chidoriLoopSFX;
+        
+        //VFX for Vacuum Blade
+        public GameObject vacuumBlade;
+        public GameObject debugObject;
         public override void OnCatalogRefresh()
         {
             //Only want one instance of the loader running
@@ -34,7 +41,7 @@ namespace Jutsu
         {
             await Task.Run(() =>
             {
-                coroutineManager = coroutine.AddComponent<CoroutineManager>();
+                //coroutineManager = coroutine.AddComponent<CoroutineManager>();
                 Choices jutsu = new Choices();
                 jutsu.Add("Substitution");
                 recognizer = new SpeechRecognitionEngine();
@@ -54,6 +61,8 @@ namespace Jutsu
                 Catalog.LoadAssetAsync<GameObject>("apoz123.LightningStyle.Chidori.ChidoriStartSFX", go => { chidoriStartSFX = go;}, "ChidoriStartSFX");
                 Catalog.LoadAssetAsync<GameObject>("apoz123.LightningStyle.Chidori.ChidoriLoopSFX",
                     go => { chidoriLoopSFX = go;}, "ChidoriLoopSFX");
+                Catalog.LoadAssetAsync<GameObject>("apoz123.Jutsu.WindRelease.VFX.VacuumBlade", data =>{this.vacuumBlade = data;}, "VacuumBladeVFX");
+                Catalog.LoadAssetAsync<GameObject>("debugObject", data =>{this.debugObject = data;}, "DebugObject");
             });
         }
 

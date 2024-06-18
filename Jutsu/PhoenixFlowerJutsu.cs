@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using ThunderRoad;
+using ThunderRoad.Skill.Spell;
 using UnityEngine;
 
 namespace Jutsu
@@ -12,9 +13,9 @@ namespace Jutsu
         public bool globalActive = true;
         private List<Item> ignoreItemsList;
 
-        public override void Load(SpellCaster spellCaster, Level level)
+        public override void Load(SpellCaster spellCaster)
         {
-            base.Load(spellCaster, level);
+            base.Load(spellCaster);
             item = Catalog.GetData<ItemData>("PhoenixFlame");
         }
 
