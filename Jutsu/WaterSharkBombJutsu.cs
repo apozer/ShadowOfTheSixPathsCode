@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using ThunderRoad;
+using ThunderRoad.Skill.Spell;
+
 namespace Jutsu
 {
     public class WaterSharkBombJutsu : SpellCastProjectile
