@@ -5,6 +5,9 @@ using Newtonsoft.Json;
 
 namespace Jutsu
 {
+    /**
+     * Shadow Possession Jutsu Controller for enemy creature ragdoll manipulation
+     */
     public class ShadowPossessionController : MonoBehaviour
     {
         private Creature creature;
@@ -18,10 +21,11 @@ namespace Jutsu
         private Transform oneHandAnchor;
         private BrainModuleDetection moduleDetection;
         
-
         public void Start()
         {
             creature = GetComponentInParent<Creature>();
+            
+            //Code attempt to manipulate creature physics to mimic player ragdoll and movement
             this.moduleDetection = creature.brain.instance.GetModule<BrainModuleDetection>();
             this.oneHandTransform = this.moduleDetection.defenseCollider.transform.FindOrAddTransform("WeaponPosition", this.moduleDetection.defenseCollider.transform.position, new Quaternion?(this.moduleDetection.defenseCollider.transform.rotation));
             this.oneHandAnchor = this.oneHandTransform.FindOrAddTransform("WeaponAnchor", this.oneHandTransform.position, new Quaternion?(this.oneHandTransform.rotation));
@@ -32,6 +36,7 @@ namespace Jutsu
             //creature.ragdoll.ik.SetShoulderAnchor(Side.Right, handle.bodyAnchor);
             /*creature.handRight.ragdoll.ik.SetShoulderState(Side.Left, true, true);
             creature.handRight.ragdoll.ik.SetShoulderWeight(Side.Left, 1f,1f);*/
+            
             instantiated = true;
         }
 

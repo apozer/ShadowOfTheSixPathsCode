@@ -5,10 +5,11 @@ using UnityEngine;
 
 namespace Jutsu
 {
+    /**
+     * Rasenshuriken spell class for VFX and functionality
+     */
     public class Rasenshuriken : SpellCastCharge
     {
-
-        public RagdollHand spawnHand;
         public ItemData rasenshurikenData;
         private Item rasenshuriken;
         private bool currentlyCasting = false;
@@ -23,6 +24,9 @@ namespace Jutsu
             rasenshurikenData = Catalog.GetData<ItemData>("apoz123.Jutsu.Chakra.Nature.Rasenshuriken");
         }
 
+        /**
+         * Future coroutine to destroy vfx and gameobject after fire is done
+         */
         IEnumerator DestroyObject(Item item)
         {
             Item.Destroy(item);
@@ -33,13 +37,15 @@ namespace Jutsu
 
         public override void UpdateCaster()
         {
-            //base.UpdateCaster();
-
+            //Check if spell is loaded and trigger is held
             if (spellCaster.isFiring)
             {
+                //Verify rasenshurikenData and rasenshuriken is allowed to spawn
                 if (rasenshurikenData != null && !currentlyCasting)
                 {
                     currentlyCasting = true;
+                    
+                    //Spawn item from SpawnAsync method using ItemData class
                     rasenshurikenData.SpawnAsync(item =>
                     {
                         rasenshuriken = item;
@@ -50,7 +56,7 @@ namespace Jutsu
 
                     });
                 }
-
+                //Verify rasenshuriken Item is not null
                 if (rasenshuriken)
                 {
                     //Update position to spellcaster magic transform every frame
@@ -61,12 +67,14 @@ namespace Jutsu
 
             else
             {
+                //Rasenshuriken is not null and destroy hasnt started (Dysfunctional)
                 if (rasenshuriken && !started)
                 {
                     started = true;
                     GameObject.Destroy(rasenshuriken);
                 }
-
+                
+                //Reset once rasenshuriken is destroyed (Dysfunctional)
                 if (!rasenshuriken)
                 {
                     started = false;
