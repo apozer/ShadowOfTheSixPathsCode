@@ -21,7 +21,8 @@ namespace Jutsu
         
         //Reference to global coroutine manager (Useful for non monbehaviour classes)
         public GameObject coroutine = new GameObject();
-        public CoroutineManager coroutineManager;
+        //public CoroutineManager coroutineManager;
+        public SDFBakeTool bakeTool = new GameObject().AddComponent<SDFBakeTool>();
         
         //Speech Recognition Engine object
         private SpeechRecognitionEngine recognizer;
@@ -37,7 +38,9 @@ namespace Jutsu
         public GameObject chidori;
         public GameObject chidoriStartSFX;
         public GameObject chidoriLoopSFX;
-        
+        //VFX for Vacuum Blade
+        public GameObject vacuumBlade;
+        public GameObject debugObject;
         public override void OnCatalogRefresh()
         {
             //Only want one instance of the loader running
@@ -51,10 +54,8 @@ namespace Jutsu
         {
             await Task.Run(() =>
             {
+                //coroutineManager = coroutine.AddComponent<CoroutineManager>();
                 //Add new component of Coroutine Manager to coroutine manager reference
-                coroutineManager = coroutine.AddComponent<CoroutineManager>();
-                
-                //Setup speech recognition with choice words
                 Choices jutsu = new Choices();
                 jutsu.Add("Substitution");
                 recognizer = new SpeechRecognitionEngine();
@@ -78,6 +79,8 @@ namespace Jutsu
                 Catalog.LoadAssetAsync<GameObject>("apoz123.LightningStyle.Chidori.ChidoriStartSFX", go => { chidoriStartSFX = go;}, "ChidoriStartSFX");
                 Catalog.LoadAssetAsync<GameObject>("apoz123.LightningStyle.Chidori.ChidoriLoopSFX",
                     go => { chidoriLoopSFX = go;}, "ChidoriLoopSFX");
+                Catalog.LoadAssetAsync<GameObject>("apoz123.Jutsu.WindRelease.VFX.VacuumBlade", data =>{this.vacuumBlade = data;}, "VacuumBladeVFX");
+                Catalog.LoadAssetAsync<GameObject>("debugObject", data =>{this.debugObject = data;}, "DebugObject");
             });
         }
 

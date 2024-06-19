@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using System.Linq;
+using ThunderRoad;
 
 namespace Jutsu
 {
@@ -43,10 +44,10 @@ namespace Jutsu
         
         private bool returnedTo = false;
         private bool soundPlayed = false;
-        public override void Load(SpellCaster spellCaster, Level level)
-        {
-            base.Load(spellCaster, level);
-            
+        public override void Load(SpellCaster spellCaster)
+        { 
+            base.Load(spellCaster);
+           
             //Set local references for VFX and SFX
             shadow = JutsuEntry.local.shadow;
             shadowSFX = JutsuEntry.local.shadowSFX;
