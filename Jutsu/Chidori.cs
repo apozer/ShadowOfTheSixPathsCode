@@ -154,15 +154,15 @@ namespace Jutsu
                     //Reset all values to default while still updating Chidori position
                     if (chidori && vfxStarted)
                     {
-                        startSoundPlayed = false;
-                        if (startSoundPlayed)
+                        if (chidoriStartSFX.isPlaying)
                         {
                             chidoriStartSFX.Stop();
                         }
-                        else
+                        else if (chidoriLoopSFX.isPlaying)
                         {
                             chidoriLoopSFX.Stop();
                         }
+                        startSoundPlayed = false;
                         chidoriVFX.Stop();
                         chidoriStarted = false;
                         vfxStarted = false;

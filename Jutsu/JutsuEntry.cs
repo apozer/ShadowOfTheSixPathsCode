@@ -55,7 +55,9 @@ namespace Jutsu
 
         public override IEnumerator LoadAddressableAssetsCoroutine()
         {
-            AsyncSetup();
+            Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.LightningRelease.Chidori.SFX.start", go => { chidoriStartSFX = go;}, "ChidoriStartSFX");
+            Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.LightningRelease.Chidori.SFX.loop",
+                go => { chidoriLoopSFX = go;}, "ChidoriLoopSFX");
             return base.LoadAddressableAssetsCoroutine();
             
         }
@@ -76,10 +78,7 @@ namespace Jutsu
                 Catalog.LoadAssetAsync<GameObject>("apoz123.Jutsu.YinRelease.VFX.ShadowPossessionJutsu.SFX",
                     go => { shadowSFX = go;}, "ShadowPossessionSFX");*/
                 //Catalog.LoadAssetAsync<GameObject>("apoz123.LightningStyle.Chidori", go => { chidori = go;}, "ChidoriVFX");
-                GameManager.local.StartCoroutine(Catalog.LoadAddressableAssetsCoroutine());
-               Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.LightningRelease.Chidori.SFX.start", go => { chidoriStartSFX = go;}, "ChidoriStartSFX");
-                Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.LightningRelease.Chidori.SFX.loop",
-                    go => { chidoriLoopSFX = go;}, "ChidoriLoopSFX");
+                //GameManager.local.StartCoroutine(Catalog.LoadAddressableAssetsCoroutine());
 
                // GameManager.local.StartCoroutine(loadAssetCoroutine);
                 //GameManager.local.StartCoroutine(assetCoroutine);
