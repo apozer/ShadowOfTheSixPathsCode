@@ -66,6 +66,7 @@ namespace Jutsu
         {
             await Task.Run(() =>
             {
+                Seals seal = new Seals();
                 //coroutineManager = coroutine.AddComponent<CoroutineManager>();
                 //Add new component of Coroutine Manager to coroutine manager reference
                 //Prevents game from getting hung up when using speech recognition engine.

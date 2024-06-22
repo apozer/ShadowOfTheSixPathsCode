@@ -101,6 +101,8 @@
         <Compile Include="Rasengan.cs" />
         <Compile Include="Rasenshuriken.cs" />
         <Compile Include="SDFBakeTool.cs" />
+        <Compile Include="Seals.cs" />
+        <Compile Include="SequenceTracker.cs" />
         <Compile Include="ShadowPossessionController.cs" />
         <Compile Include="ShadowPossessionJutsu.cs" />
         <Compile Include="SharkBombItem.cs" />
