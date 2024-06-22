@@ -44,6 +44,10 @@ namespace Jutsu
         //VFX for Vacuum Blade
         public GameObject vacuumBlade;
         public GameObject debugObject;
+        
+        //Hand Signs
+        public GameObject monkeySealRightTransform;
+        public GameObject monkeySealLeftTransform;
         public override void OnCatalogRefresh()
         {
             //Only want one instance of the loader running
@@ -58,6 +62,8 @@ namespace Jutsu
             Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.LightningRelease.Chidori.SFX.start", go => { chidoriStartSFX = go;}, "ChidoriStartSFX");
             Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.LightningRelease.Chidori.SFX.loop",
                 go => { chidoriLoopSFX = go;}, "ChidoriLoopSFX");
+            Catalog.LoadAssetAsync<GameObject>("SOTSP.HandSigns.MonkeyLeft", go => { monkeySealLeftTransform = go;}, "MonkeySealLeftTransform");
+            Catalog.LoadAssetAsync<GameObject>("SOTSP.HandSigns.MonkeyRight", go => { monkeySealRightTransform = go;}, "MonkeySealRightTransform");
             return base.LoadAddressableAssetsCoroutine();
             
         }

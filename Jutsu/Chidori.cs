@@ -9,51 +9,6 @@ namespace Jutsu
     using UnityEngine;
     using ThunderRoad;
 
-    public class HandSign
-    {
-        private PlayerControl.Hand.Button left;
-        private bool buttonLeftPressed = false;
-        private PlayerControl.Hand.Button right;
-        private bool buttonRightPressed = false;
-
-        public HandSign()
-        {
-            
-        }
-        public void SetLeft(PlayerControl.Hand.Button left)
-        {
-            this.left = left;
-        }
-        public PlayerControl.Hand.Button GetLeft()
-        {
-            return this.left;
-        }
-        public void SetRight(PlayerControl.Hand.Button right)
-        {
-            this.right = right;
-        }
-        public PlayerControl.Hand.Button GetRight()
-        {
-            return this.right;
-        }
-        public void SetRightPressed(bool rightPressed)
-        {
-            this.buttonRightPressed = rightPressed;
-        }
-        public bool GetRightPressed()
-        {
-            return this.buttonRightPressed;
-        }
-        public void SetLeftPressed(bool leftPressed)
-        {
-            this.buttonLeftPressed = leftPressed;
-        }
-        public bool GetLeftPressed()
-        {
-            return this.buttonLeftPressed;
-        }
-    }
-
     public enum HandSigns
     {
         None,
@@ -177,7 +132,7 @@ namespace Jutsu
                         chidoriStarted = true;
                         //Instantiate all Chidori GameObjects
                         //Set up references for Chidori VFX and SFX
-                        Catalog.TryGetData<ItemData>("ChidoriItem", out chidoriData, true);
+                        Catalog.TryGetData("ChidoriItem", out chidoriData);
                         if (chidoriData != null)
                         {
                             chidoriData.SpawnAsync(item =>
