@@ -55,6 +55,9 @@
         <Reference Include="Unity.ResourceManager">
           <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\Unity.ResourceManager.dll</HintPath>
         </Reference>
+        <Reference Include="Unity.VisualEffectGraph.Runtime">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\Unity.VisualEffectGraph.Runtime.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine">
           <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.dll</HintPath>
         </Reference>
@@ -84,17 +87,22 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="BakeVFX.cs" />
         <Compile Include="Chidori.cs" />
         <Compile Include="CoroutineManager.cs" />
         <Compile Include="Despawn.cs" />
         <Compile Include="FlameFollow.cs" />
         <Compile Include="FlyingRaijin.cs" />
         <Compile Include="FlyingRaijinItemModule.cs" />
+        <Compile Include="ItemMeshBakingAndVFXModule.cs" />
         <Compile Include="JutsuEntry.cs" />
         <Compile Include="PhoenixFlowerJutsu.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Rasengan.cs" />
         <Compile Include="Rasenshuriken.cs" />
+        <Compile Include="SDFBakeTool.cs" />
+        <Compile Include="Seals.cs" />
+        <Compile Include="SequenceTracker.cs" />
         <Compile Include="ShadowPossessionController.cs" />
         <Compile Include="ShadowPossessionJutsu.cs" />
         <Compile Include="SharkBombItem.cs" />

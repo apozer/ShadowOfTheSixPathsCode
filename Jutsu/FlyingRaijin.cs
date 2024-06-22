@@ -24,7 +24,7 @@ namespace Jutsu
             Player.local.locomotion.OnGroundEvent += ground_event;
         }
 
-        void ground_event(UnityEngine.Vector3 groundPoint, UnityEngine.Vector3 velocity, Collider groundCollider)
+        void ground_event(Locomotion locaLocomotion, UnityEngine.Vector3 groundPoint, UnityEngine.Vector3 velocity, Collider groundCollider)
         {
             Player.fallDamage = true;
         }

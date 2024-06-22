@@ -18,9 +18,9 @@ namespace Jutsu
         /**
          * Load necessary rasenshuriken data
          */
-        public override void Load(SpellCaster spellCaster, Level level)
+        public override void Load(SpellCaster spellCaster)
         {
-            base.Load(spellCaster, level);
+            base.Load(spellCaster);
             rasenshurikenData = Catalog.GetData<ItemData>("apoz123.Jutsu.Chakra.Nature.Rasenshuriken");
         }
 
@@ -51,8 +51,8 @@ namespace Jutsu
                         rasenshuriken = item;
                         rasenshuriken.IgnoreRagdollCollision(Player.local.creature.ragdoll);
                         rasenshuriken.transform.GetChild(0).GetChild(0).gameObject.AddComponent<ShurikenRotate>();
-                        rasenshuriken.transform.position = spellCaster.magic.transform.position;
-                        rasenshuriken.transform.rotation = spellCaster.magic.transform.rotation;
+                        //rasenshuriken.transform.position = spellCaster.magic.transform.position;
+                        //rasenshuriken.transform.rotation = spellCaster.magic.transform.rotation;
 
                     });
                 }
@@ -60,8 +60,8 @@ namespace Jutsu
                 if (rasenshuriken)
                 {
                     //Update position to spellcaster magic transform every frame
-                    rasenshuriken.transform.position = spellCaster.magic.transform.position;
-                    rasenshuriken.transform.rotation = spellCaster.magic.transform.rotation;
+                    //rasenshuriken.transform.position = spellCaster.magic.transform.position;
+                    //rasenshuriken.transform.rotation = spellCaster.magic.transform.rotation;
                 }
             }
 

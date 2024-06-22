@@ -1,14 +1,16 @@
 ﻿using System;
 using UnityEngine;
 using ThunderRoad;
+using ThunderRoad.Skill.Spell;
+
 namespace Jutsu
 {
     public class WaterSharkBombJutsu : SpellCastProjectile
     {
         private ItemData itemData;
-        public override void Load(SpellCaster spellCaster, Level level)
+        public override void Load(SpellCaster spellCaster)
         {
-            base.Load(spellCaster, level);
+            base.Load(spellCaster);
             itemData = Catalog.GetData<ItemData>("WaterShark");
         }
 

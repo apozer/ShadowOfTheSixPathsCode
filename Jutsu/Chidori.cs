@@ -1,16 +1,38 @@
-﻿using UnityEngine.VFX;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using ThunderRoad.AI.Action;
+using UnityEngine.VFX;
 
 namespace Jutsu
 {
     using UnityEngine;
     using ThunderRoad;
-    
+
+    public enum HandSigns
+    {
+        None,
+        Tiger,
+        Monkey,
+        Dragon,
+        Rat,
+        Bird,
+        Snake,
+        Ox,
+        Dog,
+        Horse,
+        Boar,
+        Ram,
+        Hare
+    }
+
     /**
      * Class for Chidori spell
      */
-    public class Chidori : SpellCastCharge
+    public class Chidori : SkillData
     {
-        private GameObject chidori;
+        private ItemData chidoriData;
+        private Item chidori;
         private VisualEffect chidoriVFX;
         private GameObject chidoriStart;
         private GameObject chidoriLoop;
@@ -21,100 +43,225 @@ namespace Jutsu
         private bool damager = false;
         private Damager pierce;
         private GameObject pierceGO;
-        
-        /**
-         * Fire
-         * parameters - active (boolean)
-         * Runs code for setting up Chidori assets
-         */
-        public override void Fire(bool active)
+        private bool chidoriStarted = false;
+        private bool vfxStarted = false;
+        private Coroutine chidoriRun;
+
+        private readonly List<HandSigns> chidoriSigns = new List<HandSigns>
         {
-            //Execute once
-            if (!chidori)
-            {
-                //Instantiate all Chidori GameObjects
-                //Set up references for Chidori VFX and SFX
-                chidori = GameObject.Instantiate(JutsuEntry.local.chidori);
-                chidoriVFX = chidori.GetComponentInChildren<VisualEffect>();
-                chidoriStart = GameObject.Instantiate(JutsuEntry.local.chidoriStartSFX);
-                chidoriStartSFX = chidoriStart.GetComponent<AudioSource>();
-                chidoriLoop = GameObject.Instantiate(JutsuEntry.local.chidoriLoopSFX);
-                chidoriLoopSFX = chidoriLoop.GetComponent<AudioSource>();
-                chidoriVFX.Play();
-                
-                //Set once
-                instantiated = true;
-            }
+            HandSigns.Monkey, HandSigns.Dragon, HandSigns.Rat, HandSigns.Bird, HandSigns.Ox, HandSigns.Snake,
+            HandSigns.Dog, HandSigns.Tiger, HandSigns.Monkey
+        };
+
+        private Step root;
+        public override void OnSkillLoaded(SkillData skillData, Creature creature)
+        {
+            base.OnSkillLoaded(skillData, creature);
+
+            chidoriRun = GameManager.local.StartCoroutine(RunChidori());
+            root = Step.Start();
+            Seals seals = new Seals();
+            var activated = root.Then(() => seals.HandDistance(activateChidori));
+            activated.Then(seals.MonkeySeal)
+                .Then(seals.DragonSeal)
+                .Then(seals.RatSeal)
+                .Then(seals.BirdSeal)
+                .Then(seals.OxSeal)
+                .Then(seals.SnakeSeal)
+                .Then(seals.DogSeal)
+                .Then(seals.TigerSeal)
+                .Then(seals.MonkeySeal)
+                .Do(() => activateChidori = true);
         }
 
-
-        public override void UpdateCaster()
+        public override void OnSkillUnloaded(SkillData skillData, Creature creature)
         {
-            //Run if all references are assigned
-            if (instantiated)
-            {
-                
-                //While spell active and holding trigger
-                if (spellCaster.isFiring)
-                {
-                    //Check to see if sound is played
-                    if (!startSoundPlayed)
-                    {
-                        chidoriStartSFX.Play();
-                        startSoundPlayed = true;
-                    }
-                    //Check to see if sound can begin looping
-                    if ((startSoundPlayed && !chidoriStartSFX.isPlaying) && !chidoriLoopSFX.isPlaying)
-                    {
-                        chidoriLoopSFX.Play();
-                    }
-                    
-                    //Get SpellCaster magic transform position and set chidori to that (Adjusted some to go into the hand, rather than in the palm)
-                    //Update position and rotation every frame
-                    var transform = spellCaster.ragdollHand.caster.magicSource.transform;
-                    chidori.transform.position = transform.position + (-transform.forward * 0.05f);
-                    chidori.transform.rotation = transform.rotation;
-                    
-                    /*
-                     * Currently not functional code
-                     */
-                    /*if (!damager)
-                    {
-                        damager = true;
-                        GameObject go = new GameObject();
-                        go.AddComponent<Damager>();
-                        pierceGO = GameObject.Instantiate(go);
-                        pierce = pierceGO.GetComponent<Damager>();
-                        pierceGO.transform.parent = spellCaster.ragdollHand.fingerMiddle.tip.transform;
-                        pierce.direction = Damager.Direction.Forward;
-                        pierce.penetrationLength = 1f;
-                        pierce.transform.position = spellCaster.ragdollHand.fingerMiddle.tip.transform.position;
-                        pierce.transform.rotation = spellCaster.ragdollHand.fingerMiddle.tip.transform.rotation;
+            base.OnSkillUnloaded(skillData, creature);
+            GameManager.local.StopCoroutine(chidoriRun);
+        }
 
-                    }*/
+        private bool handSignEventOver = false;
+        private bool coroutineStarted = false;
+        private bool activateChidori = false;
+        
+        private FixedJoint joint;
+        private bool hasPenetrated = false;
+        private Creature penetrated;
+        private List<HandSigns> tempSigns = new List<HandSigns>();
+        private bool chidoriTimerActive = false;
+        private bool waitActive = false;
+        private HandSigns prevHandSign;
+        private bool disabled = false;
+        
+        IEnumerator RunChidori()
+        {
+            yield return new WaitForSeconds(2f);
+            while (true)
+            {
+                root.Update();
+                if (root.AtEnd()) root.Reset();
+                
+                if (Vector3.Distance(Player.local.handRight.ragdollHand.transform.position,
+                        Player.local.handLeft.ragdollHand.transform.position) < 1f && !activateChidori)
+                {
+                    if (!disabled)
+                    {
+                        Player.local.handRight.ragdollHand.caster.DisableSpellWheel(this);
+                        Player.local.handLeft.ragdollHand.caster.DisableSpellWheel(this);
+                        disabled = true;
+                    }
+                }
+                else
+                {
+                    if (!disabled)
+                    {
+                        Player.local.handRight.ragdollHand.caster.AllowSpellWheel(this);
+                        Player.local.handLeft.ragdollHand.caster.AllowSpellWheel(this);
+                        disabled = true;
+                    }
+                }
+                if (activateChidori)
+                {
+                    if (!chidoriTimerActive)
+                    {
+                        chidoriTimerActive = true;
+                        GameManager.local.StartCoroutine(ChidoriActiveTimer());
+                    }
+                    if (!chidori && !chidoriStarted)
+                    {
+                        chidoriStarted = true;
+                        //Instantiate all Chidori GameObjects
+                        //Set up references for Chidori VFX and SFX
+                        Catalog.TryGetData("ChidoriItem", out chidoriData);
+                        if (chidoriData != null)
+                        {
+                            chidoriData.SpawnAsync(item =>
+                            {
+                                chidori = item;
+                                chidori.physicBody.useGravity = false;
+                                chidori.transform.position =
+                                    Player.local.handRight.ragdollHand.transform.position;
+                                chidori.transform.rotation =
+                                    Player.local.handRight.ragdollHand.transform.rotation;
+                                chidori.IgnoreRagdollCollision(Player.local.creature.ragdoll);
+                                joint = Player.local.handRight.ragdollHand.gameObject.AddComponent<FixedJoint>();
+                                joint.breakForce = Mathf.Infinity;
+                                joint.breakTorque =  Mathf.Infinity;
+                                joint.connectedBody = chidori.physicBody.rigidBody;
+                                
+                                foreach (Creature c in Creature.allActive)
+                                {
+                                    if (!c.isPlayer)
+                                    {
+                                        Player.local.creature.ragdoll.rightUpperArmPart.ragdoll.IgnoreCollision(
+                                            c.ragdoll, true);
+                                        Player.local.creature.handRight.ragdoll.IgnoreCollision(c.ragdoll, true);
+                                    }
+                                }
+                                chidoriVFX = chidori.gameObject.GetComponentInChildren<VisualEffect>();
+                                chidoriStart = GameObject.Instantiate(JutsuEntry.local.chidoriStartSFX);
+                                chidoriStartSFX = chidoriStart.GetComponent<AudioSource>();
+                                chidoriLoop = GameObject.Instantiate(JutsuEntry.local.chidoriLoopSFX);
+                                chidoriLoopSFX = chidoriLoop.GetComponent<AudioSource>();
+                                chidoriVFX.Stop();
+                            });
+                        }
+                        else
+                        {
+                            chidoriStarted = false;
+                        }
+
+                    }
+
+                    else if(chidori)
+                    {
+                        //While spell active and holding trigger
+                            //Check to see if sound is played
+                            if (!startSoundPlayed)
+                            {
+                                chidoriStartSFX.Play();
+                                startSoundPlayed = true;
+                            }
+
+                            //Check to see if sound can begin looping
+                            if ((startSoundPlayed && !chidoriStartSFX.isPlaying) && !chidoriLoopSFX.isPlaying)
+                            {
+                                chidoriLoopSFX.Play();
+                            }
+
+                            //Get SpellCaster magic transform position and set chidori to that (Adjusted some to go into the hand, rather than in the palm)
+                            //Update position and rotation every frame
+                            if (!vfxStarted)
+                            {
+                                chidoriVFX.Play();
+                                vfxStarted = true;
+                            }
+
+                            if (chidori.isPenetrating)
+                            {
+                                penetrated = chidori.GetComponentInParent<Creature>();
+                                hasPenetrated = true;
+                            }
+                            if (!chidori.isPenetrating && hasPenetrated)
+                            {
+                                Debug.Log("HAS PENETRATED IS TRUE");
+                                GameObject.DestroyImmediate(joint);
+                                chidori.transform.position =
+                                    Player.local.handRight.ragdollHand.transform.position;
+                                chidori.transform.rotation =
+                                    Player.local.handRight.ragdollHand.transform.rotation;
+                                chidori.IgnoreRagdollCollision(Player.local.creature.ragdoll);
+                                if(penetrated) chidori.IgnoreRagdollCollision(penetrated.ragdoll);
+                                Debug.Log("JOINT IS: " + joint);
+                                joint = Player.local.handRight.ragdollHand.gameObject.AddComponent<FixedJoint>();
+                                joint.breakForce = Mathf.Infinity;
+                                joint.breakTorque =  Mathf.Infinity;
+                                joint.connectedBody = chidori.physicBody.rigidBody;
+                                chidori.ResetRagdollCollision();
+                                chidori.IgnoreRagdollCollision(Player.local.creature.ragdoll);
+                                hasPenetrated = false;
+                            }
+                    }
                 }
                 else
                 {
                     //Reset all values to default while still updating Chidori position
-                    startSoundPlayed = false;
-                    chidoriVFX.Stop();
-                    chidori.transform.position = spellCaster.ragdollHand.caster.magicSource.transform.position;
-                    chidori.transform.rotation = spellCaster.ragdollHand.caster.magicSource.transform.rotation;
+                    if (chidori && vfxStarted)
+                    {
+                        if (chidoriStartSFX.isPlaying)
+                        {
+                            chidoriStartSFX.Stop();
+                        }
+                        else if (chidoriLoopSFX.isPlaying)
+                        {
+                            chidoriLoopSFX.Stop();
+                        }
+                        startSoundPlayed = false;
+                        chidoriVFX.Stop();
+                        chidoriStarted = false;
+                        vfxStarted = false;
+                        foreach (Creature c in Creature.allActive)
+                        {
+                            if (!c.isPlayer)
+                            {
+                                Player.local.creature.ragdoll.rightUpperArmPart.ragdoll
+                                    .IgnoreCollision(c.ragdoll, false);
+                                Player.local.creature.handRight.ragdoll.IgnoreCollision(c.ragdoll, false);
+                            }
+                        }
+                        chidori.Despawn();
+                        chidoriTimerActive = false;
+                    }
                 }
+
+                yield return null;
             }
         }
 
-        public override void Unload()
+        IEnumerator ChidoriActiveTimer()
         {
-            
-            //Remove assets when spell is unloaded
-            base.Unload();
-            GameObject.Destroy(chidori);
-            GameObject.Destroy(chidoriVFX);
-            GameObject.Destroy(chidoriStart);
-            GameObject.Destroy(chidoriStartSFX);
-            GameObject.Destroy(chidoriLoop);
-            GameObject.Destroy(chidoriLoopSFX);
+            yield return new WaitForSeconds(10f);
+            activateChidori = false;
         }
     }
 }
