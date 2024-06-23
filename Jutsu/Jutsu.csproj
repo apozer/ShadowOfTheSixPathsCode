@@ -11,6 +11,7 @@
         <AssemblyName>Jutsu</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -94,6 +95,7 @@
         <Compile Include="FlameFollow.cs" />
         <Compile Include="FlyingRaijin.cs" />
         <Compile Include="FlyingRaijinItemModule.cs" />
+        <Compile Include="Gesture.cs" />
         <Compile Include="ItemMeshBakingAndVFXModule.cs" />
         <Compile Include="JutsuEntry.cs" />
         <Compile Include="PhoenixFlowerJutsu.cs" />

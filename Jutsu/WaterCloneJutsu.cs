@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ThunderRoad;
 using ThunderRoad.Manikin;
@@ -6,6 +7,7 @@ using ThunderRoad.Skill.Spell;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.VFX;
+using Object = UnityEngine.Object;
 
 namespace Jutsu
 {
@@ -142,42 +144,64 @@ namespace Jutsu
             if (playerContainer == null || playerContainer.contents == null) return;
 
             //try catch
-            /*try
+            try
             {
-                foreach (ContainerData.Content content in playerContainer.contents)
+
+                /*List<ItemData> wardrobe = playerContainer.GetAllWardrobe();
+                foreach (ItemContent itemContent in
+                         creature.container.contents.GetEnumerableContentsOfType<ItemContent>(true,
+                             (Func<ItemContent, bool>)(content =>
+                             {
+                                 ItemModuleWardrobe module;
+                                 if (!content.data.TryGetModule<ItemModuleWardrobe>(out module))
+                                     return false;
+                                 return module.category == Equipment.WardRobeCategory.Body;
+
+                             })))
+                {
+                    if (itemContent.HasState<ContentStateWorn>())
+                        creature.equipment.EquipWardrobe(itemContent, false);
+                }
+
+            foreach (ContainerContent content in playerContainer.contents)
+               {
+                   creature.container.contents.Add(content);
+                   //check if its a holder item and spawn and snap it
+                   if (content(out ContentStateHolder state))
+                   {
+                       content.Spawn(item => {
+                           foreach (Holder holder in creature.holders)
+                           {
+                               if (holder.name != state.holderName) continue;
+                               holder.Snap(item, true, true);
+                           }
+                       });
+                   }
+               }
+                foreach (var itemData in wardrobe)
                 {
                     //add the content to the creatures container
-                    creature.container.contents.Add(content);
+                    creature.equipment.EquipWardrobe(itemData);
                     //check if its a wardrobe item and equip it
                     if (content.itemData.TryGetModule(out ItemModuleWardrobe _))
                     {
                         creature.equipment.EquipWardrobe(content);
                     }
 
-                    //check if its a holder item and spawn and snap it
-                    if (content.TryGetState(out ContentStateHolder state))
-                    {
-                        content.Spawn(item => {
-                            foreach (Holder holder in creature.holders)
-                            {
-                                if (holder.name != state.holderName) continue;
-                                holder.Snap(item, true, true);
-                            }
-                        });
-                    }
                 }
+            }*/
             }
             catch (System.Exception e)
             {
                 Debug.LogError($"Something went wrong when setting the creatures equipment {e}");
             }
-            */
+
         }
 
         private static void SetCreatureLooks(Creature creature)
         {
-            //Used because SetHeight causes some issues when trying to hard set a position with SpellCastProjectile
-            /*try
+            /*//Used because SetHeight causes some issues when trying to hard set a position with SpellCastProjectile
+            try
             {
                 creature.SetHeight(Player.currentCreature.GetHeight());
                 creature.SetColor(Player.characterData.hairColor, Creature.ColorModifier.Hair);
@@ -188,8 +212,9 @@ namespace Jutsu
                 creature.SetColor(Player.characterData.eyesScleraColor, Creature.ColorModifier.EyesSclera);
             }
             catch (System.Exception e)
-            {*/
-            Debug.LogError($"Something went wrong when setting the creatures height and colours");//e}");
-    }
+            {
+                Debug.LogError($"Something went wrong when setting the creatures height and colours"); //e}");
+            }*/
+        }
     }
 }
