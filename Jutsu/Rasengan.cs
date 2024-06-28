@@ -144,7 +144,6 @@ namespace Jutsu
                         }
                         else outerDone = true;
                         
-
                         if (innerDone && outerDone && spinnerDone) 
                         {
                             increaseVFX = false;
