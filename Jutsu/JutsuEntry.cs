@@ -41,6 +41,11 @@ namespace Jutsu
         //public GameObject chidori;
         public GameObject chidoriStartSFX;
         public GameObject chidoriLoopSFX;
+        
+        //GameObjects for Rasengan
+        public GameObject rasenganStartSFX;
+        public GameObject rasenganLoopSFX;
+        
         //VFX for Vacuum Blade
         public GameObject vacuumBlade;
         public GameObject debugObject;
@@ -61,6 +66,9 @@ namespace Jutsu
         {
             Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.LightningRelease.Chidori.SFX.start", go => { chidoriStartSFX = go;}, "ChidoriStartSFX");
             Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.LightningRelease.Chidori.SFX.loop",
+                go => { chidoriLoopSFX = go;}, "ChidoriLoopSFX");
+            Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.Chakra.Rasengan.SFX.Start", go => { chidoriStartSFX = go;}, "ChidoriStartSFX");
+            Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.Chakra.Rasengan.SFX.Loop",
                 go => { chidoriLoopSFX = go;}, "ChidoriLoopSFX");
             Catalog.LoadAssetAsync<GameObject>("SOTSP.HandSigns.MonkeyLeft", go => { monkeySealLeftTransform = go;}, "MonkeySealLeftTransform");
             Catalog.LoadAssetAsync<GameObject>("SOTSP.HandSigns.MonkeyRight", go => { monkeySealRightTransform = go;}, "MonkeySealRightTransform");

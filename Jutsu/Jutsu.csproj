@@ -99,6 +99,7 @@
         <Compile Include="PhoenixFlowerJutsu.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Rasengan.cs" />
+        <Compile Include="RasenganMono.cs" />
         <Compile Include="Rasenshuriken.cs" />
         <Compile Include="SDFBakeTool.cs" />
         <Compile Include="Seals.cs" />
@@ -107,6 +108,7 @@
         <Compile Include="ShadowPossessionJutsu.cs" />
         <Compile Include="SharkBombItem.cs" />
         <Compile Include="ShurikenRotate.cs" />
+        <Compile Include="SpellCastChakra.cs" />
         <Compile Include="SubstitutionJutsu.cs" />
         <Compile Include="WaterCloneActive.cs" />
         <Compile Include="WaterCloneJutsu.cs" />

@@ -21,7 +21,7 @@ namespace Jutsu
         internal bool HandDistance(bool activateChidori)
         {
             return Vector3.Distance(Player.local.handRight.ragdollHand.transform.position,
-                Player.local.handLeft.ragdollHand.transform.position) < 1f && !activateChidori;
+                Player.local.handLeft.ragdollHand.transform.position) < 0.1f && !activateChidori;
         }
 
         internal bool TigerSeal()
