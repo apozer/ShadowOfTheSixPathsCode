@@ -52,16 +52,13 @@ namespace Jutsu
             HandSigns.Monkey, HandSigns.Dragon, HandSigns.Rat, HandSigns.Bird, HandSigns.Ox, HandSigns.Snake,
             HandSigns.Dog, HandSigns.Tiger, HandSigns.Monkey
         };
-
-        private Step root;
         public override void OnSkillLoaded(SkillData skillData, Creature creature)
         {
             base.OnSkillLoaded(skillData, creature);
 
             chidoriRun = GameManager.local.StartCoroutine(RunChidori());
-            root = Step.Start();
             Seals seals = new Seals();
-            var activated = root.Then(() => seals.HandDistance(activateChidori));
+            var activated = JutsuEntry.local.root.Then(() => seals.HandDistance(activateChidori));
             activated.Then(seals.MonkeySeal)
                 .Then(seals.DragonSeal)
                 .Then(seals.RatSeal)
@@ -98,26 +95,27 @@ namespace Jutsu
             yield return new WaitForSeconds(2f);
             while (true)
             {
-                root.Update();
-                if (root.AtEnd()) root.Reset();
+                JutsuEntry.local.root.Update();
+                if (JutsuEntry.local.root.AtEnd()) JutsuEntry.local.root.Reset(); 
                 
-                if (Vector3.Distance(Player.local.handRight.ragdollHand.transform.position,
-                        Player.local.handLeft.ragdollHand.transform.position) < 1f && !activateChidori)
+                if (Vector3.Distance(Player.local.handRight.ragdollHand.caster.transform.position,
+                        Player.local.handLeft.ragdollHand.caster.transform.position) < 0.1f && !activateChidori)
                 {
-                    if (!disabled)
+                    if (!JutsuEntry.local.spellWheelDisabled)
                     {
                         Player.local.handRight.ragdollHand.caster.DisableSpellWheel(this);
                         Player.local.handLeft.ragdollHand.caster.DisableSpellWheel(this);
-                        disabled = true;
+                        JutsuEntry.local.spellWheelDisabled = true;
                     }
                 }
                 else
                 {
-                    if (!disabled)
+                    if (JutsuEntry.local.spellWheelDisabled)
                     {
+                        JutsuEntry.local.root.Reset();
                         Player.local.handRight.ragdollHand.caster.AllowSpellWheel(this);
                         Player.local.handLeft.ragdollHand.caster.AllowSpellWheel(this);
-                        disabled = true;
+                        JutsuEntry.local.spellWheelDisabled = false;
                     }
                 }
                 if (activateChidori)
@@ -262,6 +260,12 @@ namespace Jutsu
         {
             yield return new WaitForSeconds(10f);
             activateChidori = false;
+            if (disabled)
+            {
+                Player.local.handRight.ragdollHand.caster.AllowSpellWheel(this);
+                Player.local.handLeft.ragdollHand.caster.AllowSpellWheel(this);
+                disabled = false;
+            }
         }
     }
 }

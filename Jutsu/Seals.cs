@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 namespace Jutsu
 {
@@ -18,10 +19,17 @@ namespace Jutsu
             Player.local.handRight.ragdollHand.playerHand.SetCreature(Player.local.handRight.ragdollHand);
             Player.local.handLeft.ragdollHand.playerHand.SetCreature(Player.local.handLeft.ragdollHand);
         }
-        internal bool HandDistance(bool activateChidori)
+        internal bool HandDistance(bool activated)
         {
+            return Vector3.Distance(Player.local.handRight.ragdollHand.caster.transform.position,
+                Player.local.handLeft.ragdollHand.caster.transform.position) < 0.15f && !activated;
+        }
+        
+        internal bool HandDistance()
+        {
+            
             return Vector3.Distance(Player.local.handRight.ragdollHand.transform.position,
-                Player.local.handLeft.ragdollHand.transform.position) < 1f && !activateChidori;
+                Player.local.handLeft.ragdollHand.transform.position) < 0.1f;
         }
 
         internal bool TigerSeal()
