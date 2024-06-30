@@ -82,6 +82,7 @@ namespace Jutsu
         public override void OnSkillUnloaded(SkillData skillData, Creature creature)
         {
             base.OnSkillUnloaded(skillData, creature);
+            CustomEndData();
             GameManager.local.StopCoroutine(this.activeJutsuCoroutine);
         }
 
@@ -132,6 +133,11 @@ namespace Jutsu
         }
 
         internal virtual void CustomStartData()
+        {
+            
+        }
+
+        internal virtual void CustomEndData()
         {
             
         }
