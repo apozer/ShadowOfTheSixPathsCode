@@ -100,6 +100,7 @@ namespace Jutsu
         }
 
         public Step root;
+        public float jutsuActiveTime = 10f;
         public void SequenceManagement()
         {
             root = Step.Start();
