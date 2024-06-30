@@ -9,27 +9,10 @@ namespace Jutsu
     using UnityEngine;
     using ThunderRoad;
 
-    public enum HandSigns
-    {
-        None,
-        Tiger,
-        Monkey,
-        Dragon,
-        Rat,
-        Bird,
-        Snake,
-        Ox,
-        Dog,
-        Horse,
-        Boar,
-        Ram,
-        Hare
-    }
-
     /**
      * Class for Chidori spell
      */
-    public class Chidori : SkillData
+    public class Chidori : JutsuSkill
     {
         private ItemData chidoriData;
         private Item chidori;
@@ -39,93 +22,48 @@ namespace Jutsu
         private AudioSource chidoriStartSFX;
         private AudioSource chidoriLoopSFX;
         private bool startSoundPlayed = false;
-        private bool instantiated = false;
-        private bool damager = false;
         private Damager pierce;
         private GameObject pierceGO;
         private bool chidoriStarted = false;
         private bool vfxStarted = false;
-        private Coroutine chidoriRun;
+        private readonly string spellId = "LightningInit";
 
-        private readonly List<HandSigns> chidoriSigns = new List<HandSigns>
+        internal override void CustomStartData()
         {
-            HandSigns.Monkey, HandSigns.Dragon, HandSigns.Rat, HandSigns.Bird, HandSigns.Ox, HandSigns.Snake,
-            HandSigns.Dog, HandSigns.Tiger, HandSigns.Monkey
-        };
-
-        private Step root;
-        public override void OnSkillLoaded(SkillData skillData, Creature creature)
-        {
-            base.OnSkillLoaded(skillData, creature);
-
-            chidoriRun = GameManager.local.StartCoroutine(RunChidori());
-            root = Step.Start();
-            Seals seals = new Seals();
-            var activated = root.Then(() => seals.HandDistance(activateChidori));
-            activated.Then(seals.MonkeySeal)
-                .Then(seals.DragonSeal)
-                .Then(seals.RatSeal)
-                .Then(seals.BirdSeal)
-                .Then(seals.OxSeal)
-                .Then(seals.SnakeSeal)
-                .Then(seals.DogSeal)
-                .Then(seals.TigerSeal)
-                .Then(seals.MonkeySeal)
-                .Do(() => activateChidori = true);
+            SetSpellInstanceID(spellId);
+            var activated = JutsuEntry.local.root.Then(() => GetSeals().HandDistance(GetActivated()) && (CheckSpellType())).Do(() => JutsuEntry.local.root.Reset());
+            activated.Then(GetSeals().MonkeySeal)
+                .Then(GetSeals().DragonSeal)
+                .Then(GetSeals().RatSeal)
+                .Then(GetSeals().BirdSeal)
+                .Then(GetSeals().OxSeal)
+                .Then(GetSeals().SnakeSeal)
+                .Then(GetSeals().DogSeal)
+                .Then(GetSeals().TigerSeal)
+                .Then(GetSeals().MonkeySeal)
+                .Do(() => SetActivated(true));
         }
-
-        public override void OnSkillUnloaded(SkillData skillData, Creature creature)
-        {
-            base.OnSkillUnloaded(skillData, creature);
-            GameManager.local.StopCoroutine(chidoriRun);
-        }
-
-        private bool handSignEventOver = false;
-        private bool coroutineStarted = false;
-        private bool activateChidori = false;
         
         private FixedJoint joint;
         private bool hasPenetrated = false;
         private Creature penetrated;
-        private List<HandSigns> tempSigns = new List<HandSigns>();
-        private bool chidoriTimerActive = false;
-        private bool waitActive = false;
-        private HandSigns prevHandSign;
-        private bool disabled = false;
-        
-        IEnumerator RunChidori()
+
+
+        internal override IEnumerator JutsuStart()
         {
             yield return new WaitForSeconds(2f);
             while (true)
             {
-                root.Update();
-                if (root.AtEnd()) root.Reset();
+                JutsuEntry.local.root.Update();
+                if (JutsuEntry.local.root.AtEnd()) JutsuEntry.local.root.Reset(); 
+                SpellWheelCheck();
                 
-                if (Vector3.Distance(Player.local.handRight.ragdollHand.transform.position,
-                        Player.local.handLeft.ragdollHand.transform.position) < 1f && !activateChidori)
+                if (GetActivated())
                 {
-                    if (!disabled)
+                    if (!GetJutsuTimerActivated())
                     {
-                        Player.local.handRight.ragdollHand.caster.DisableSpellWheel(this);
-                        Player.local.handLeft.ragdollHand.caster.DisableSpellWheel(this);
-                        disabled = true;
-                    }
-                }
-                else
-                {
-                    if (!disabled)
-                    {
-                        Player.local.handRight.ragdollHand.caster.AllowSpellWheel(this);
-                        Player.local.handLeft.ragdollHand.caster.AllowSpellWheel(this);
-                        disabled = true;
-                    }
-                }
-                if (activateChidori)
-                {
-                    if (!chidoriTimerActive)
-                    {
-                        chidoriTimerActive = true;
-                        GameManager.local.StartCoroutine(ChidoriActiveTimer());
+                        SetJutsuTimerActivated(true);
+                        GameManager.local.StartCoroutine(JutsuActive());
                     }
                     if (!chidori && !chidoriStarted)
                     {
@@ -139,11 +77,14 @@ namespace Jutsu
                             {
                                 chidori = item;
                                 chidori.physicBody.useGravity = false;
+                                
                                 chidori.transform.position =
                                     Player.local.handRight.ragdollHand.transform.position;
                                 chidori.transform.rotation =
                                     Player.local.handRight.ragdollHand.transform.rotation;
+                                
                                 chidori.IgnoreRagdollCollision(Player.local.creature.ragdoll);
+                                
                                 joint = Player.local.handRight.ragdollHand.gameObject.AddComponent<FixedJoint>();
                                 joint.breakForce = Mathf.Infinity;
                                 joint.breakTorque =  Mathf.Infinity;
@@ -204,7 +145,6 @@ namespace Jutsu
                             }
                             if (!chidori.isPenetrating && hasPenetrated)
                             {
-                                Debug.Log("HAS PENETRATED IS TRUE");
                                 GameObject.DestroyImmediate(joint);
                                 chidori.transform.position =
                                     Player.local.handRight.ragdollHand.transform.position;
@@ -212,7 +152,6 @@ namespace Jutsu
                                     Player.local.handRight.ragdollHand.transform.rotation;
                                 chidori.IgnoreRagdollCollision(Player.local.creature.ragdoll);
                                 if(penetrated) chidori.IgnoreRagdollCollision(penetrated.ragdoll);
-                                Debug.Log("JOINT IS: " + joint);
                                 joint = Player.local.handRight.ragdollHand.gameObject.AddComponent<FixedJoint>();
                                 joint.breakForce = Mathf.Infinity;
                                 joint.breakTorque =  Mathf.Infinity;
@@ -250,18 +189,11 @@ namespace Jutsu
                             }
                         }
                         chidori.Despawn();
-                        chidoriTimerActive = false;
+                        SetJutsuTimerActivated(false);
                     }
                 }
-
                 yield return null;
             }
-        }
-
-        IEnumerator ChidoriActiveTimer()
-        {
-            yield return new WaitForSeconds(10f);
-            activateChidori = false;
         }
     }
 }

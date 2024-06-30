@@ -48,6 +48,7 @@ namespace Jutsu
         //Hand Signs
         public GameObject monkeySealRightTransform;
         public GameObject monkeySealLeftTransform;
+        public bool spellWheelDisabled = false;
         public override void OnCatalogRefresh()
         {
             //Only want one instance of the loader running
@@ -64,6 +65,10 @@ namespace Jutsu
                 go => { chidoriLoopSFX = go;}, "ChidoriLoopSFX");
             Catalog.LoadAssetAsync<GameObject>("SOTSP.HandSigns.MonkeyLeft", go => { monkeySealLeftTransform = go;}, "MonkeySealLeftTransform");
             Catalog.LoadAssetAsync<GameObject>("SOTSP.HandSigns.MonkeyRight", go => { monkeySealRightTransform = go;}, "MonkeySealRightTransform");
+            
+            //Shadow Possesion
+            Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.YinRelease.ShadowPossession", go => { shadow = go;}, "ShadowVFX");
+            Catalog.LoadAssetAsync<GameObject>("SOTSP.Jutsu.YinRelease.SFX.ShadowPossession", go => { shadowSFX = go;}, "ShadowSFX");
             return base.LoadAddressableAssetsCoroutine();
             
         }
@@ -72,7 +77,7 @@ namespace Jutsu
         {
             await Task.Run(() =>
             {
-                Seals seal = new Seals();
+                SequenceManagement();
                 //coroutineManager = coroutine.AddComponent<CoroutineManager>();
                 //Add new component of Coroutine Manager to coroutine manager reference
                 //Prevents game from getting hung up when using speech recognition engine.
@@ -92,6 +97,13 @@ namespace Jutsu
                 /*Catalog.LoadAssetAsync<GameObject>("apoz123.Jutsu.WindRelease.VFX.VacuumBlade", data =>{this.vacuumBlade = data;}, "VacuumBladeVFX");*/
                 /*Catalog.LoadAssetAsync<GameObject>("debugObject", data =>{this.debugObject = data;}, "DebugObject");*/
             });
+        }
+
+        public Step root;
+        public float jutsuActiveTime = 10f;
+        public void SequenceManagement()
+        {
+            root = Step.Start();
         }
     }
     
